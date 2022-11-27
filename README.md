@@ -14,7 +14,7 @@ git clone https://github.com/on1y4fun/users_flask_app.git
 Создать и активировать виртуальное окружение:
 
 ```
-python -m venv env
+python -m venv venv
 ```
 
 ```
@@ -34,7 +34,17 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```
-flask db migrate
+flask db init
+```
+
+```
+flask db migrate -m "initial migration"
+```
+
+Заполнить базу тестовыми данными:
+
+```
+flask --app app alchemydumps restore -d 20221127214632
 ```
 
 Запустить проект:

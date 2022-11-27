@@ -105,6 +105,7 @@ function userEditPage(user_id){
             user_data.first_name.value = data["first_name"]
             user_data.last_name.value = data["last_name"]
             user_data.username.value = data["username"]
+            window.history.pushState({}, "", '/api/users/' + user_id + '/')
         }
     }
     xhr.send();
