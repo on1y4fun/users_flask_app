@@ -2,16 +2,51 @@
 <html lang="ru">
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="msapplication-TileColor" content="#000" />
     <meta name="theme-color" content="#ffffff" />
-    {% block title_content %}
-    {% endblock %}
   </head>
   <body>
-    <main>{% block content %} {% endblock %}</main>
+    <main>
+      <div class="container py-5">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Имя</th>
+              <th scope="col">Фамилия</th>
+              <th scope="col">Username</th>
+              <th scope="col">Дата добавления</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <th scope="row" id="id">{{ user.id }}</th>
+              <td id="first_name">{{ user.first_name }}</td>
+              <td id="last_name">{{ user.last_name }}</td>
+              <td id="username">{{ user.username }}</td>
+              <td id="date_created">{{ user.date_created }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button
+          type="submit"
+          onclick="goTo('register/')"
+          class="btn btn-primary"
+        >
+          Add new user
+        </button>
+        <button type="submit" onclick="goTo('login/')" class="btn btn-primary">
+          Login
+        </button>
+      </div>
+    </main>
   </body>
-  <script src="static/js/main.js"></script>
-
+  <script src={{ url_for('static', filename='js/main.js') }}></script>
 </html>

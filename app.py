@@ -1,12 +1,16 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import Flask, render_template, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_marshmallow import Marshmallow
+from flask_restful import Api, Resource
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+marsh = Marshmallow(app)
+api = Api(app)
 
 
 class Users(db.Model):
@@ -21,45 +25,69 @@ class Users(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route('/')
+
+@app.route('/', methods=['GET'])
 def index():
-    if request.method == 'POST':
-        pass
-    else:
-        users = Users.query.order_by(Users.date_created).all()
-        return render_template('users/index.html', users=users)
+    return render_template('base.html')
 
-@app.route('/register/', methods=['GET', 'POST'])
+
+@app.route('/register/', methods=['GET'])
 def register():
-    if request.method == 'POST':
-        print(dir(request.form))
-        pass
+    return render_template('base.html')
 
-@app.route('/login/', methods=['GET', 'POST'])
+
+@app.route('/login/', methods=['GET'])
 def login():
-    if request.method == 'GET':
-        return ('', 200)
-    else:
-        username = request.form['username']
-        password = request.form['password']
-        if not (username or password):
-            return 'Required field'
-        user = Users.query.filter_by(username=username).first()
-        if not user:
-            return 'No such user'
-        if password != user.password:
-            return 'Wrong password'
-        return redirect(url_for('.users', id=user.id))
-        
+    return render_template('base.html')
 
-@app.route('/users/<int:id>')
-def users(id):
-    user = Users.query.get_or_404(id)
-    if user:
-        return {
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "date_created": user.date_created
-        }
 
+@app.route('/edit/', methods=['GET'])
+def edit():
+    return render_template('base.html')
+
+
+class UserSchema(marsh.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Users
+
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+
+class UsersListResource(Resource):
+    def get(self):
+        users = Users.query.all()
+        return users_schema.dump(users)
+
+    def post(self):
+        new_user = Users(
+            first_name=request.json['first_name'],
+            last_name=request.json['last_name'],
+            username=request.json['username'],
+            password=request.json['password'],
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return user_schema.dump(new_user)
+
+
+class UserResource(Resource):
+    def get(self, user_id):
+        user = Users.query.get_or_404(user_id)
+        return user_schema.dump(user)
+
+    def patch(self, user_id):
+        user = Users.query.get_or_404(user_id)
+        if 'first_name' in request.json:
+            user.first_name = request.json['first_name']
+        if 'last_name' in request.json:
+            user.last_name = request.json['last_name']
+        if 'username' in request.json:
+            user.username = request.json['username']
+        db.session.commit()
+        return user_schema.dump(user)
+
+
+api.add_resource(UsersListResource, '/api/users/')
+api.add_resource(UserResource, '/api/users/<int:user_id>/')
