@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="msapplication-TileColor" content="#000" />
+    <meta name="theme-color" content="#ffffff" />
+    {% block title_content %}
+    {% endblock %}
+  </head>
+  <body>
+    <main>{% block content %} {% endblock %}</main>
+  </body>
+  <script src="static/js/main.js"></script>
+
+</html>

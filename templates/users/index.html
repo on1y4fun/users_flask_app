@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block title_content %}
+<title>Пользователи</title>
+{% endblock %} {% block content %}
+<div class="container py-5">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Фамилия</th>
+        <th scope="col">Username</th>
+        <th scope="col">Дата добавления</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <th scope="row">{{ user.id }}</th>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.date_created }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <button type="submit" onclick="loadLoginPage()" class="btn btn-primary">Login</button>
+</div>
+{% endblock %}
