@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
+from flask import Flask, render_template, request
+from flask_alchemydumps import AlchemyDumps
 from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
 from flask_restful import Api, Resource
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -11,6 +13,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 marsh = Marshmallow(app)
 api = Api(app)
+alchemydumps = AlchemyDumps(app, db)
 
 
 class Users(db.Model):
@@ -19,7 +22,7 @@ class Users(db.Model):
     first_name = db.Column(db.String(32))
     last_name = db.Column(db.String(32))
     password = db.Column(db.String(48), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow().date())
 
 
 with app.app_context():
